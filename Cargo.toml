@@ -1,8 +1,27 @@
 [package]
 name = "solana-staking-app"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+no-entrypoint = []
 
 [dependencies]
+borsh = "0.9.3"
+borsh-derive = "0.9.3"
+solana-program = "1.14.5"
+thiserror = "1.0.37"
+
+[profile.release]
+codegen-units = 1
+# Tell `rustc` to optimize for small code size.
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+# Opt into extra safety checks on arithmetic operations https://stackoverflow.com/a/64136471/249801
+overflow-checks = true
+
+[lib]
+name = "stakingapp"
+crate-type = ["cdylib", "lib"]
