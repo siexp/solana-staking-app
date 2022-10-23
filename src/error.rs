@@ -16,6 +16,15 @@ pub enum StakingError {
     /// Account already initialized
     #[error("Account already initialized")]
     AlreadyInitialized,
+    /// Invalid user storage PDA account
+    #[error("Invalid user storage PDA")]
+    InvalidUserStoragePda,
+    /// Invalid SystemProgram account
+    #[error("Invalid SystemProgram account")]
+    SystemProgramMismatch,
+    /// Account is not initialized
+    #[error("Account is not initialized")]
+    NotInitialized,
 }
 
 impl From<StakingError> for ProgramError {
