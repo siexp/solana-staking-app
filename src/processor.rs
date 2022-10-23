@@ -50,7 +50,7 @@ fn process_initialize_pool(
 
     storage_data.pool_authority = *signer.key;
     storage_data.total_staked = 0u64;
-    storage_data.user_count = 064;
+    storage_data.user_count = 0u64;
     storage_data.rewards_per_token = rewards_per_token;
     storage_data.is_initialized = true;
 
