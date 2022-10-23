@@ -1,11 +1,15 @@
-use solana_program::{
-    account_info::{AccountInfo, next_account_info}, entrypoint::ProgramResult, pubkey::Pubkey, msg, program_pack::IsInitialized};
 use borsh::{BorshDeserialize, BorshSerialize};
+use solana_program::{
+    account_info::{next_account_info, AccountInfo},
+    entrypoint::ProgramResult,
+    msg,
+    program_pack::IsInitialized,
+    pubkey::Pubkey,
+};
 
 use crate::error::StakingError;
 use crate::instruction::Instruction;
 use crate::state::PoolStorageAccount;
-
 
 pub fn process(
     program_id: &Pubkey,
@@ -15,19 +19,19 @@ pub fn process(
     let instruction = Instruction::try_from_slice(instruction_data)?;
 
     match instruction {
-        Instruction::Initialize {
-            rewards_per_token,
-        } => {
+        Instruction::Initialize { rewards_per_token } => {
             msg!("Initialize pool");
             process_initialize_pool(program_id, accounts, rewards_per_token)
         }
-        _ => {
-            Err(StakingError::InvalidInstruction.into())
-        }
+        _ => Err(StakingError::InvalidInstruction.into()),
     }
 }
 
-fn process_initialize_pool(program_id: &Pubkey, accounts: &[AccountInfo], rewards_per_token: u64) -> ProgramResult {
+fn process_initialize_pool(
+    program_id: &Pubkey,
+    accounts: &[AccountInfo],
+    rewards_per_token: u64,
+) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let signer = next_account_info(accounts_iter)?;
     if !signer.is_signer {

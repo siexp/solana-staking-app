@@ -1,7 +1,7 @@
-use borsh::{BorshSerialize, BorshDeserialize};
-use solana_program::{pubkey::Pubkey, program_pack::IsInitialized};
+use borsh::{BorshDeserialize, BorshSerialize};
+use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
-/// Define the type of state stored in 
+/// Define the type of state stored in
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct PoolStorageAccount {
     pub pool_authority: Pubkey,

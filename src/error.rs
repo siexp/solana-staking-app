@@ -15,7 +15,7 @@ pub enum StakingError {
     InvalidOwner,
     /// Account already initialized
     #[error("Account already initialized")]
-    AlreadyInitialized
+    AlreadyInitialized,
 }
 
 impl From<StakingError> for ProgramError {
