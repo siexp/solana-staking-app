@@ -3,14 +3,17 @@ use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
     msg,
+    program::invoke_signed,
+    program_error::ProgramError,
     program_pack::IsInitialized,
-    pubkey::Pubkey, system_program, program_error::ProgramError, program::invoke_signed, system_instruction,
+    pubkey::Pubkey,
+    system_instruction, system_program,
     sysvar::{rent::Rent, Sysvar},
 };
 
-use crate::{error::StakingError, state};
 use crate::instruction::Instruction;
 use crate::state::{PoolStorageAccount, UserStorageAccount, USER_STORAGE_TOTAL_BYTES};
+use crate::{error::StakingError, state};
 
 pub fn process(
     program_id: &Pubkey,
@@ -24,7 +27,7 @@ pub fn process(
             msg!("Initialize pool");
             process_initialize_pool(program_id, accounts, rewards_per_token)
         }
-        Instruction::CreateUser { } => {
+        Instruction::CreateUser {} => {
             msg!("Create signer");
             process_create_user(program_id, accounts)
         }
@@ -66,10 +69,7 @@ fn process_initialize_pool(
     Ok(())
 }
 
-fn process_create_user(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-) -> ProgramResult {
+fn process_create_user(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let signer = next_account_info(accounts_iter)?;
     if !signer.is_signer {
@@ -110,7 +110,8 @@ fn process_create_user(
         &[&[signer.key.as_ref(), &[bump_seed]]],
     )?;
 
-    let mut user_storage_data = UserStorageAccount::try_from_slice(&user_storage_pda_account.data.borrow())?;
+    let mut user_storage_data =
+        UserStorageAccount::try_from_slice(&user_storage_pda_account.data.borrow())?;
     if user_storage_data.is_initialized() {
         return Err(ProgramError::AccountAlreadyInitialized);
     }
@@ -122,7 +123,8 @@ fn process_create_user(
     user_storage_data.serialize(&mut &mut user_storage_pda_account.data.borrow_mut()[..])?;
 
     let pool_storage_account = next_account_info(accounts_iter)?;
-    let mut pool_storage_data = PoolStorageAccount::try_from_slice(&pool_storage_account.data.borrow())?;
+    let mut pool_storage_data =
+        PoolStorageAccount::try_from_slice(&pool_storage_account.data.borrow())?;
     if !pool_storage_data.is_initialized() {
         return Err(StakingError::NotInitialized.into());
     }
